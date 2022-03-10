@@ -1,0 +1,43 @@
+#!/bin/bash
+# Breseq script for a single reference, and two input reads.
+
+REFERENCE_FILE=$1
+
+DIRECTORY=$2
+
+FILE_PREFIX=$3
+
+
+FORWARD_FILE_NAME="${FILE_PREFIX}_R1_001"
+FORWARD_FILE="$2/$FORWARD_FILE_NAME.fastq.gz"
+
+NUM_CORES=8
+
+# Preliminary requirements
+# Current directory
+start_dir=$PWD
+
+# Make and go to Scratch directory
+mkdir -p /scratch/$USER/$SLURM_JOBID
+cd /scratch/$USER/$SLURM_JOBID
+
+# Step 1, trim adapter sequences
+
+java -jar $HOME/softwares/Trimmomatic-0.35/trimmomatic-0.35.jar SE -threads $NUM_CORES -phred33 $FORWARD_FILE $FORWARD_FILE_NAME.trim.fastq.gz ILLUMINACLIP:$HOME/softwares/Trimmomatic-0.35/adapters/NexteraPE-PE.fa:2:30:10:8:TRUE LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36
+
+# Step 2, run breseq
+
+breseq --no-junction-prediction -j $NUM_CORES -r $1 $FORWARD_FILE_NAME.trim.fastq.gz -n $FILE_PREFIX
+
+# Step 3, copy files from scratch to directory.
+cp -r /scratch/$USER/$SLURM_JOBID/output $start_dir/$FILE_PREFIX/
+
+# Compress the evidence folder
+tar -czf $start_dir/$FILE_PREFIX/evidence.tar.gz -C $start_dir/$FILE_PREFIX/evidence/ . --remove-files
+rm -r $start_dir/$FILE_PREFIX/calibration
+
+# Clean up
+rm -rf /scratch/$USER/$SLURM_JOBID
+
+# Go back to beginning
+cd $start_dir

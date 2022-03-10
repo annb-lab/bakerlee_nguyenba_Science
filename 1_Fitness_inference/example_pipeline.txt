@@ -1,0 +1,20 @@
+# Remove fastq headers
+
+bash /n/home00/nnguyenba/scripts/ilt/new_ilt_scripts/clean.sh FILE > cleaned_FILE.txt
+
+# parse the barcodes from the reads
+
+cat cleaned_FILE.txt | python parse.py > parsed_FILE.txt
+
+# Error correct the barcodes based on known barcodes
+
+error_correct_from_dict -bc 5 -dict whitelist.txt parsed_FILE.txt | grep -v "\t0\t" | sort -u > corrected_FILE.txt
+
+# Get the counts
+
+python get_counts.py -order 1,1_2,1_3,1_4,1_5,1 -file corrected_FILE.txt >counts_FILE_1.txt
+python get_counts.py -order 6,1_7,1_8,1_9,1_10,1 -file corrected_FILE.txt >counts_FILE_2.txt
+
+# Get the fitness values. Joint inference of both replicates.
+
+PCG_BFA_4 counts_FILE_1.txt counts_FILE_2.txt >selection_FILE.txt

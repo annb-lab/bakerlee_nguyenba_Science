@@ -1,0 +1,1 @@
+python lasso_2.py -i selection_FILE.txt --order 10 --basis 1 >lasso_FILE_10.txt
