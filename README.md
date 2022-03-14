@@ -9,6 +9,6 @@ It contains example pipelines and minimal code necessary for:
 
 The code is not expected to be readily functional to the user, as dependencies, paths and hardcoded values would need to be appropriately adjusted.
 
-Raw sequencing reads were uploaded to NCBI SRA
+Raw sequencing reads were uploaded to NCBI SRA under the accession PRJNA815849.
 
 Supplementary files are included with the published research article.
