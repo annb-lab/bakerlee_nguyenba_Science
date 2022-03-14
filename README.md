@@ -6,6 +6,7 @@ It contains example pipelines and minimal code necessary for:
 
 1. processing of raw sequencing reads into inferred genotype and phenotype data;
 2. inference of epistatic model coefficients.
+3. analysis for fitness-correlated trends
 
 The code is not expected to be readily functional to the user, as dependencies, paths and hardcoded values would need to be appropriately adjusted.
 
